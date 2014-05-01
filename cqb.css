@@ -1,0 +1,29 @@
+h1, h2, h3, h4, h5, h6, body, table, p, div, span, a, li {
+  font-weight: normal;  
+  font-family: 'Helvetica';
+  vertical-align:middle;
+  text-shadow: 0 0px 0;
+}
+
+
+div.table-container {
+	width: 15%;
+	border: #DDDDDD 1px solid;
+}
+
+div.table-cell {	
+	border: #CCCCCC 1px solid;
+	padding: 2px;
+	padding-left: 4px;
+}
+
+div.er-diagram {
+	width: 100%;
+	height: 400px;
+	overflow: auto;
+	border: #CCCCCC 1px solid;
+}
+
+.droppable-hover {	
+	background-color: yellow;
+}
