@@ -5,23 +5,49 @@ h1, h2, h3, h4, h5, h6, body, table, p, div, span, a, li {
   text-shadow: 0 0px 0;
 }
 
+#table_panel  {
+	width: 25%;
+	height: 100%;
+	border: 1px solid black;
+	float: left;
+}
+#right_panel{
+	
+	height: 100%;
+	border: 1px solid black;
+	float: right;
+}
+
+div.innerPanel{
+	height: 30%;
+	border: 1px solid black;
+	overflow: auto;
+}
+div.table{
+	width: 50%;
+	border: #DDDDDD 1px solid;
+}
 
 div.table-container {
-	width: 15%;
+	width: 50px;
 	border: #DDDDDD 1px solid;
+	display: inline-block;
+	
 }
 
 div.table-cell {	
 	border: #CCCCCC 1px solid;
 	padding: 2px;
 	padding-left: 4px;
+	width: 50%;
 }
 
 div.er-diagram {
 	width: 100%;
-	height: 400px;
+	height: 100%;
 	overflow: auto;
 	border: #CCCCCC 1px solid;
+	
 }
 
 .droppable-hover {	
