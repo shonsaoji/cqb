@@ -35,7 +35,15 @@ jsPlumb.ready(function() {
 
 		});
 
-	//$("#right_panel").resizable();
+	$("#accordian").accordion({
+			collapsible: true,
+			icons: { "header": "ui-icon-plus", "activeHeader": "ui-icon-minus" },
+			heightStyle: "content",
+			active:false
+		});
+
+
+	
 });
 
 function CQB(opts) {
@@ -49,23 +57,29 @@ function CQB(opts) {
 	{
 		name: "orders",
 		fields: ["order_id", "customer_id", "total"],
+	},
+	{
+		name:"employees",
+		fields: ["emplyee_id","name","adress"],
 	}
 	];
 	this.tableList = [];
 
 	this.init = function() {
 		//this.element.html("<div id='table_list' ></div><div id='er-diagram' class='er-diagram'><h1>Drag Tables Here</h1></div>");
-		this.element.html("<div id='table_panel' class='panel-default'><div class='panel-heading'>Table List</div><div id='table_list' class='panel-body '></div></div><div id='right_panel'class='panel-default'><div id = 'er_panel' class='innerPanel panel-default'><div class='panel-heading'>Query Builder</div><div id='er-diagram' class='er-diagram panel-body'><h1>Drag Tables Here</h1></div></div><div id = 'output_panel'class='innerPanel panel-default'><div class='panel-heading'>Query</div></div><div id = 'query_panel'class='innerPanel panel-default'><div class='panel-heading'>Query</div></div></div>");
+		this.element.html("<div id='table_panel' class='panel-default'><div class='panel-heading'>Table List</div><div id='accordian' class=''></div></div><div id='right_panel'class='panel-default'><div id = 'er_panel' class='innerPanel panel-default'><div class='panel-heading'>Query Builder</div><div id='er-diagram' class='er-diagram panel-body'><h6>Drag Tables Here</h6></div></div><div id = 'output_panel'class='innerPanel panel-default'><div class='panel-heading'>Query</div></div><div id = 'query_panel'class='innerPanel panel-default'><div class='panel-heading'>Query</div></div></div>");
 		
 		this.tableList = new TableList({
-			element: "table_list",
+			element: "accordian",
 			tables: this.tables_list,
 			container_class: "table"
 		});
-		this.erDiagram = new ERDiagram();		
+		// this.erDiagram = new ERDiagram({
+		// 	tables: this.tables_list
+		// });		
 		this.tableList.draw();
 		
-		this.erDiagram.draw();
+		//this.erDiagram.draw();
 		this.attachEvents();
 
 	};
@@ -80,18 +94,42 @@ function CQB(opts) {
 	};
 
 	this.attachEvents = function() {
+		var erdiagram = new ERDiagram({
+			tables: this.tables_list
+		});
+		
 		for(var i = 0; i < this.tables_list.length; i++) {
 			var table_name_elem = $("#" + this.tables_list[i].name);
-			table_name_elem.draggable({ revert: true });			
+		
+			table_name_elem.draggable({ helper:"clone" ,
+					drag: function(){
+						//alert(this.id);
+						erdiagram.setTable(this.id);
+					}
+				});			
 		}		
 
 		var er_elem = $("#er-diagram");
-		er_elem.find(".draggable").draggable();
+		
 		$("#er-diagram").droppable({
 			drop: function( event, ui ) {
-		    	
+		    	var tablename = erdiagram.getTable();
+		    	//alert("inside droppable "+ tablename);
+
+		    	 if(er_elem.has("#"+tablename).length<= 0)
+		    	 {
+		    		erdiagram.draw(tablename);
+		    		//erdiagram.setTable(" ");
+		    		//$("#"+tablename).draggable();
+		    		console.log("after "+tablename +" "+ er_elem.has(".draggable").length);
+		    	}else{
+		    		//alert("Table "+tablename+" alredy present in Query Builder");
+		    	}
 		    }
 		});
+
+		//console.log(er_elem.has(".table-container").length);
+		
 		er_elem.find(".table-cell").draggable({
 			helper: "clone"
 		});
@@ -117,7 +155,12 @@ function TableList(opts) {
 	this.draw = function() {
 		var html = "";
 		for(var i = 0; i < this.tables.length; i++) {
-			html += "<div class='" + this.cell_class + "' id='" + this.tables[i].name + "'>" + this.tables[i].name + " </div>";
+			html += "<h3 id='" + this.tables[i].name + "'>"+this.tables[i].name +"</h3><div class='" + this.cell_class + "' ><ul>" ;
+			for(var j=0;j<this.tables[i].fields.length;j++)
+			{
+				html += "<li>"+ this.tables[i].fields[j]+"</li>";
+			}
+			html += "</ul> </div>";
 		}
 
 		$(this.cell_class).removeClass("table-container");
@@ -129,32 +172,50 @@ function TableList(opts) {
 };
 
 
-function ERDiagram() {
-	this.tables = [
-	{
-		name: "customers",
-		fields: ["customer_id", "name", "address"]
-	},
-	{
-		name: "orders",
-		fields: ["order_id", "customer_id", "total"],
-	}
-	];
+function ERDiagram(opts) {
+	
+	this.tables = opts.tables;
 
-	this.draw = function() {
-		var elem = $("#er-diagram"),
-		html = "";
-		for(var i = 0; i < this.tables.length; i++) {
-			html += "<div class='table-container draggable' style=\"left: " + i*75 + "\">" + this.tables[i].name;
-			for(var j = 0; j < this.tables[i].fields.length; j++) {
+	this.get_fields_for_table = function(table_name) {
+		var table = this.tables.find(function(d) {
+			return d.name == table_name;
+		});
+		if(table) {
+			return table[0].fields;
+		}
+	};
+	this.setTable = function(table_name)
+	{
+		this.table = table_name;
+		
+	}
+	this.getTable = function()
+	{
+		return this.table;
+	}
+
+	this.draw = function(tablename) {
+		var elem = $("#er-diagram");
+		
+		var table = this.tables.find(function(d) {
+			return d.name == tablename;
+		});
+		if(table) {
+	
+		html = " ";
+			html += "<div class='table-container draggable ' id='"+tablename+"' >" + tablename;
+			for(var j = 0; j < table.fields.length; j++) {
 				html += "<div class='table-cell'>" ;
-				html += "<input type=checkbox value='" + this.tables[i].fields[j] + "' />&nbsp;";
-				html += this.tables[i].fields[j] ;
+				html += "<input type=checkbox value='" + table.fields[j] + "' />&nbsp;";
+				html += table.fields[j] ;
 				html += "</div>";
 			}
 			
 			html += "</div>";
-		}
-		elem.html(html);
+		
+		elem.append(html);
+		console.log(elem.has(".draggable").length);
+		elem.find(".draggable").draggable();
+	}
 	};
 }

@@ -24,12 +24,12 @@ div.innerPanel{
 	overflow: auto;
 }
 div.table{
-	width: 50%;
-	border: #DDDDDD 1px solid;
+	
+	
 }
 
 div.table-container {
-	width: 50px;
+	width: 100px;
 	border: #DDDDDD 1px solid;
 	display: inline-block;
 	
@@ -39,7 +39,7 @@ div.table-cell {
 	border: #CCCCCC 1px solid;
 	padding: 2px;
 	padding-left: 4px;
-	width: 50%;
+	width: 100%;
 }
 
 div.er-diagram {
@@ -48,6 +48,15 @@ div.er-diagram {
 	overflow: auto;
 	border: #CCCCCC 1px solid;
 	
+}
+.ui-widget-content{
+	border: 0px !important;
+} 
+
+.ui-accordion-header{
+	padding-top: 0px !important;
+	padding-right: 0px !important;
+	padding-bottom: 0px !important;
 }
 
 .droppable-hover {	
