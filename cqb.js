@@ -72,7 +72,7 @@ function CQB(opts) {
 		this.tableList = new TableList({
 			element: "accordian",
 			tables: this.tables_list,
-			container_class: "table"
+			container_class: "table_accordian"
 		});
 		// this.erDiagram = new ERDiagram({
 		// 	tables: this.tables_list
@@ -97,6 +97,7 @@ function CQB(opts) {
 		var erdiagram = new ERDiagram({
 			tables: this.tables_list
 		});
+
 		
 		for(var i = 0; i < this.tables_list.length; i++) {
 			var table_name_elem = $("#" + this.tables_list[i].name);
@@ -105,6 +106,9 @@ function CQB(opts) {
 					drag: function(){
 						//alert(this.id);
 						erdiagram.setTable(this.id);
+						//console.log("inside drag: " +erdiagram.getFlag());
+						erdiagram.setFlag("new");
+						//console.log("inside drag: " +erdiagram.getFlag());
 					}
 				});			
 		}		
@@ -115,19 +119,28 @@ function CQB(opts) {
 			drop: function( event, ui ) {
 		    	var tablename = erdiagram.getTable();
 		    	//alert("inside droppable "+ tablename);
-
-		    	 if(er_elem.has("#"+tablename).length<= 0)
+		    	//console.log($.inArray(tablename, erdiagram.tables_in_diagram));
+		    	 //if(er_elem.has("#"+tablename).length<= 0)
+		    	 if($.inArray(tablename, erdiagram.tables_in_diagram)<0 )
 		    	 {
+		    	 	
 		    		erdiagram.draw(tablename);
-		    		//erdiagram.setTable(" ");
-		    		//$("#"+tablename).draggable();
-		    		console.log("after "+tablename +" "+ er_elem.has(".draggable").length);
-		    	}else{
-		    		//alert("Table "+tablename+" alredy present in Query Builder");
+
+		    		//console.log("inside drop" +erdiagram.tables_in_diagram);
+		    	}else if(erdiagram.getFlag() == "new"){
+		    		//console.log(erdiagram.getFlag());
+		    		//if(erdiagram.getFlag() == "new")
+		    		//{
+		    		//console.log($.inArray(tablename, erdiagram.tables_in_diagram));
+		    	
+		    		alert("Table "+tablename+" alredy present in Query Builder");
+		    		erdiagram.setFlag("old");
+		    	//}
 		    	}
 		    }
 		});
 
+		
 		//console.log(er_elem.has(".table-container").length);
 		
 		er_elem.find(".table-cell").draggable({
@@ -176,6 +189,8 @@ function ERDiagram(opts) {
 	
 	this.tables = opts.tables;
 
+	this.tables_in_diagram = [];
+	var self = this;
 	this.get_fields_for_table = function(table_name) {
 		var table = this.tables.find(function(d) {
 			return d.name == table_name;
@@ -187,23 +202,45 @@ function ERDiagram(opts) {
 	this.setTable = function(table_name)
 	{
 		this.table = table_name;
+		//this.flag = true;
 		
+	}
+	this.setFlag = function(str){
+		this.flag = str;
+	}
+	this.getFlag = function(){
+		return this.flag;
 	}
 	this.getTable = function()
 	{
 		return this.table;
 	}
 
+	this.removeTable = function(tablename)
+	{
+		$("#er-diagram").remove("#"+tablename);
+	}
+
+	
+
 	this.draw = function(tablename) {
 		var elem = $("#er-diagram");
 		
-		var table = this.tables.find(function(d) {
-			return d.name == tablename;
-		});
+		// var table = this.tables.find(function(d) {
+		// 	return d.name == tablename;
+		// });
+
+		for(var i=0;i<this.tables.length;i++)
+		{
+			if(this.tables[i].name == tablename)
+			{
+				var table = this.tables[i];
+			}
+		}
 		if(table) {
 	
 		html = " ";
-			html += "<div class='table-container draggable ' id='"+tablename+"' >" + tablename;
+			html += "<div class='table-container draggable ' id='"+tablename+"_table' >" + tablename + "<span style='float: right; padding-right: 2px; cursor:pointer;position: relative;' id = '"+tablename+"'  class = 'remove-table  glyphicon glyphicon-remove'></span>";
 			for(var j = 0; j < table.fields.length; j++) {
 				html += "<div class='table-cell'>" ;
 				html += "<input type=checkbox value='" + table.fields[j] + "' />&nbsp;";
@@ -214,8 +251,21 @@ function ERDiagram(opts) {
 			html += "</div>";
 		
 		elem.append(html);
-		console.log(elem.has(".draggable").length);
 		elem.find(".draggable").draggable();
+		this.setFlag("old");
+		//console.log("in draw:" +this.getFlag());
+		this.tables_in_diagram.push(tablename);
+		console.log(this.tables_in_diagram);
+		elem.find(".remove-table").click(function(){
+			//console.log("inside remove-table " + this.id);
+			$("#"+this.id+"_table").remove();
+			var index = $.inArray(this.id,self.tables_in_diagram);
+			if(index>= 0)
+			{
+			 self.tables_in_diagram.splice(index,1);
+			}
+			//console.log(self.tables_in_diagram);
+		});
 	}
 	};
 }

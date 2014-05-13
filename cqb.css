@@ -10,6 +10,7 @@ h1, h2, h3, h4, h5, h6, body, table, p, div, span, a, li {
 	height: 100%;
 	border: 1px solid black;
 	float: left;
+	
 }
 #right_panel{
 	
@@ -18,14 +19,14 @@ h1, h2, h3, h4, h5, h6, body, table, p, div, span, a, li {
 	float: right;
 }
 
+
 div.innerPanel{
 	height: 30%;
 	border: 1px solid black;
 	overflow: auto;
 }
-div.table{
-	
-	
+.table_accordian{	
+	width: 150px;
 }
 
 div.table-container {
@@ -33,6 +34,9 @@ div.table-container {
 	border: #DDDDDD 1px solid;
 	display: inline-block;
 	
+}
+div.table-container a{
+	color: black !important;
 }
 
 div.table-cell {	
@@ -52,6 +56,8 @@ div.er-diagram {
 .ui-widget-content{
 	border: 0px !important;
 } 
+
+
 
 .ui-accordion-header{
 	padding-top: 0px !important;
