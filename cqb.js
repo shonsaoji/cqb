@@ -41,7 +41,21 @@ jsPlumb.ready(function() {
 			active:false
 		});
 
-
+	 // instance = window.instance =jsPlumb.getInstance({
+		// 	// default drag options
+		// 	DragOptions : { cursor: 'pointer', zIndex:2000 },
+		// 	// the overlays to decorate each connection with.  note that the label overlay uses a function to generate the label text; in this
+		// 	// case it returns the 'labelText' member that we set on each connection in the 'init' method below.
+		// 	ConnectionOverlays : [
+		// 		[ "Arrow", { location:1 } ],
+		// 		[ "Label", { 
+		// 			location:0.1,
+		// 			id:"label",
+		// 			cssClass:"aLabel"
+		// 		}]
+		// 	],
+		// 	Container:"er-diagram"
+		// });
 	
 });
 
@@ -74,7 +88,10 @@ function CQB(opts) {
 		});
 		this.erDiagram = new ERDiagram({
 			tables: this.tables_list
-		});		
+		});	
+
+		flowchart = new Flowchart();
+
 		this.tableList.draw();
 		
 		//this.erDiagram.draw();
@@ -172,7 +189,7 @@ function TableList(opts) {
 
 function ERDiagram(opts) {
 	
-	this.tables = opts.tables;
+	//this.tables = opts.tables;
 
 	this.tables_in_diagram = [];
 	var self = this;
@@ -196,16 +213,28 @@ function ERDiagram(opts) {
 			var html = " ";
 			html += "<div class='table-container draggable ' id='"+table.name+"_table' >" + table.name + "<span style='float: right; padding-right: 2px; cursor:pointer;position: relative;' id = '"+table.name+"'  class = 'remove-table  glyphicon glyphicon-remove'></span>";
 			for(var j = 0; j < table.fields.length; j++) {
-				html += "<div class='table-cell'>" ;
+				html += "<div id='"+table.name+"_"+table.fields[j]+"' class='table-cell'>" ;
 				html += "<input type=checkbox value='" + table.fields[j] + "' />&nbsp;";
 				html += table.fields[j] ;
 				html += "</div>";
+
+				//flowchart._addEndpoints(table.name+"_"+table.fields[j],["LeftMiddle"], ["RightMiddle"]);
+
 			}
 			
 			html += "</div>";
 		
 		elem.append(html);
-		elem.find(".draggable").draggable();
+for(var j = 0; j < table.fields.length; j++) {
+		jsPlumb.addEndpoint(table.name+"_"+table.fields[j], flowchart.sourceEndpoint, { anchor:"Left", uuid:table.name+"_"+table.fields[j]});
+		jsPlumb.addEndpoint(table.name+"_"+table.fields[j], flowchart.targetEndpoint, { anchor:"Right", uuid:table.name+"_"+table.fields[j]});
+		
+		}	
+
+		jsPlumb.draggable($("#"+table.name+"_table"), {
+  containment:"parent"
+});	
+		//elem.find(".draggable").draggable();
 		this.tables_in_diagram.push(table.name);
 		console.log(this.tables_in_diagram);
 		elem.find(".remove-table").click(function(){
@@ -230,7 +259,7 @@ function ERDiagram(opts) {
 		var html = " ";
 			html += "<div class='table-container draggable ' id='"+tablename+"_table' >" + tablename + "<span style='float: right; padding-right: 2px; cursor:pointer;position: relative;' id = '"+tablename+"'  class = 'remove-table  glyphicon glyphicon-remove'></span>";
 			for(var j = 0; j < table.fields.length; j++) {
-				html += "<div class='table-cell'>" ;
+				html += "<div id='"+tablename+"_"+table.fields[j]+"' class='table-cell'>" ;
 				html += "<input type=checkbox value='" + table.fields[j] + "' />&nbsp;";
 				html += table.fields[j] ;
 				html += "</div>";
@@ -247,4 +276,81 @@ function ERDiagram(opts) {
 		});
 	}
 	};
+}
+
+function Flowchart(){
+
+	// this is the paint style for the connecting lines..
+		 var connectorPaintStyle = {
+			lineWidth:4,
+			strokeStyle:"#61B7CF",
+			joinstyle:"round",
+			outlineColor:"white",
+			outlineWidth:2
+		},
+		// .. and this is the hover style. 
+		connectorHoverStyle = {
+			lineWidth:4,
+			strokeStyle:"#216477",
+			outlineWidth:2,
+			outlineColor:"white"
+		},
+		endpointHoverStyle = {
+			fillStyle:"#216477",
+			strokeStyle:"#216477"
+		};
+		// the definition of source endpoints (the small blue ones)
+		this.sourceEndpoint = {
+			endpoint:"Dot",
+			paintStyle:{ 
+				strokeStyle:"#7AB02C",
+				fillStyle:"transparent",
+				radius:3,
+				lineWidth:3 
+			},				
+			isSource:true,
+			connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5, alwaysRespectStubs:true } ],								                
+			connectorStyle:connectorPaintStyle,
+			hoverPaintStyle:endpointHoverStyle,
+			connectorHoverStyle:connectorHoverStyle,
+           // dragOptions:{},
+            // overlays:[
+            // 	[ "Label", { 
+            //     	location:[0.5, 1.5], 
+            //     	label:"Drag",
+            //     	cssClass:"endpointSourceLabel" 
+            //     } ]
+            // ]
+		};		
+		// the definition of target endpoints (will appear when the user drags a connection) 
+		this.targetEndpoint = {
+			endpoint:"Dot",					
+			paintStyle:{ fillStyle:"#7AB02C",radius:4 },
+			hoverPaintStyle:endpointHoverStyle,
+			maxConnections:-1,
+			//dropOptions:{ hoverClass:"hover", activeClass:"active" },
+			isTarget:true,			
+            // overlays:[
+            // 	[ "Label", { location:[0.5, -0.5], label:"Drop", cssClass:"endpointTargetLabel" } ]
+            // ]
+		};			
+		this.init = function(connection) {			
+			connection.getOverlay("label").setLabel(connection.sourceId.substring(15) + "-" + connection.targetId.substring(15));
+			connection.bind("editCompleted", function(o) {
+				if (typeof console != "undefined")
+					console.log("connection edited. path is now ", o.path);
+			});
+		};			
+
+		this._addEndpoints = function(toId, sourceAnchors, targetAnchors) {
+				for (var i = 0; i < sourceAnchors.length; i++) {
+					var sourceUUID = toId + sourceAnchors[i];
+					instance.addEndpoint(toId, sourceEndpoint, { anchor:sourceAnchors[i], uuid:sourceUUID });						
+				}
+				for (var j = 0; j < targetAnchors.length; j++) {
+					var targetUUID = toId + targetAnchors[j];
+					instance.addEndpoint( toId, targetEndpoint, { anchor:targetAnchors[j], uuid:targetUUID });						
+				}
+			};
+
 }
