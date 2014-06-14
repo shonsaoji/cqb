@@ -218,7 +218,6 @@ function ERDiagram(opts) {
 				html += table.fields[j] ;
 				html += "</div>";
 
-				jsPlumb.addEndpoint(table.name+"_"+table.fields[j], flowchart.sourceEndpoint, { anchor:"LeftMiddle", uuid:table.name+"_"+table.fields[j]+"_LeftMiddle"});
 				//flowchart._addEndpoints(table.name+"_"+table.fields[j],["LeftMiddle"], ["RightMiddle"]);
 
 			}
@@ -226,7 +225,16 @@ function ERDiagram(opts) {
 			html += "</div>";
 		
 		elem.append(html);
-		elem.find(".draggable").draggable();
+for(var j = 0; j < table.fields.length; j++) {
+		jsPlumb.addEndpoint(table.name+"_"+table.fields[j], flowchart.sourceEndpoint, { anchor:"Left", uuid:table.name+"_"+table.fields[j]});
+		jsPlumb.addEndpoint(table.name+"_"+table.fields[j], flowchart.targetEndpoint, { anchor:"Right", uuid:table.name+"_"+table.fields[j]});
+		
+		}	
+
+		jsPlumb.draggable($("#"+table.name+"_table"), {
+  containment:"parent"
+});	
+		//elem.find(".draggable").draggable();
 		this.tables_in_diagram.push(table.name);
 		console.log(this.tables_in_diagram);
 		elem.find(".remove-table").click(function(){
@@ -297,7 +305,7 @@ function Flowchart(){
 			paintStyle:{ 
 				strokeStyle:"#7AB02C",
 				fillStyle:"transparent",
-				radius:7,
+				radius:3,
 				lineWidth:3 
 			},				
 			isSource:true,
@@ -305,26 +313,26 @@ function Flowchart(){
 			connectorStyle:connectorPaintStyle,
 			hoverPaintStyle:endpointHoverStyle,
 			connectorHoverStyle:connectorHoverStyle,
-            dragOptions:{},
-            overlays:[
-            	[ "Label", { 
-                	location:[0.5, 1.5], 
-                	label:"Drag",
-                	cssClass:"endpointSourceLabel" 
-                } ]
-            ]
+           // dragOptions:{},
+            // overlays:[
+            // 	[ "Label", { 
+            //     	location:[0.5, 1.5], 
+            //     	label:"Drag",
+            //     	cssClass:"endpointSourceLabel" 
+            //     } ]
+            // ]
 		};		
 		// the definition of target endpoints (will appear when the user drags a connection) 
 		this.targetEndpoint = {
 			endpoint:"Dot",					
-			paintStyle:{ fillStyle:"#7AB02C",radius:11 },
+			paintStyle:{ fillStyle:"#7AB02C",radius:4 },
 			hoverPaintStyle:endpointHoverStyle,
 			maxConnections:-1,
-			dropOptions:{ hoverClass:"hover", activeClass:"active" },
+			//dropOptions:{ hoverClass:"hover", activeClass:"active" },
 			isTarget:true,			
-            overlays:[
-            	[ "Label", { location:[0.5, -0.5], label:"Drop", cssClass:"endpointTargetLabel" } ]
-            ]
+            // overlays:[
+            // 	[ "Label", { location:[0.5, -0.5], label:"Drop", cssClass:"endpointTargetLabel" } ]
+            // ]
 		};			
 		this.init = function(connection) {			
 			connection.getOverlay("label").setLabel(connection.sourceId.substring(15) + "-" + connection.targetId.substring(15));
