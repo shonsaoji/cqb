@@ -29,6 +29,16 @@ div.innerPanel{
 	width: 150px;
 }
 
+.remove-conn
+{
+	vertical-align: center;
+	text-align: center;
+	width: 250px;
+	cursor: pointer;
+	border: #DDDDDD 1px solid;
+	display: inline-block;
+}
+
 div.table-container {
 	width: 100px;
 	border: #DDDDDD 1px solid;
