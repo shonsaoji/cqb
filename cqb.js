@@ -214,13 +214,41 @@ function ERDiagram(opts)
       this.removeTable = function(uiId, table_name)
       {
 
-          $(uiId).remove();
+        $(uiId).remove();
 
-          var index = $.inArray(table_name,this.tables_in_diagram);
-          if(index>= 0)
-          {
-           this.tables_in_diagram.splice(index,1);
-          }
+              var index = $.inArray(table_name,this.tables_in_diagram);
+              if(index>= 0)
+              {
+               this.tables_in_diagram.splice(index,1);
+              }
+            
+           var length=arr.length;
+             
+
+           for(var i=0;i<length;i++)
+           {
+              
+             
+
+              if(((drag[i].substring(0,3))==table_name.substring(0,3))||((drop[i].substring(0,3))==table_name.substring(0,3)))
+              {
+
+                 jqSimpleConnect.removeConnection(arr[i]);
+                 delete(arr[i]);
+                delete(drag[i]);
+                delete(drop[i]);
+                drag[i]="zzz";
+                drop[i]="zzz";
+                
+
+                 var parent= document.getElementById('table_panel');
+                var child =document.getElementById("div"+i);
+                 parent.removeChild(child);
+              }
+
+           
+           }
+          
       }
 
  
@@ -305,6 +333,9 @@ function ERDiagram(opts)
                           delete drag[j];
                           delete drop[j];
 
+                          drag[j]="zzz";
+                          drop[j]="zzz";
+
                           var parent= document.getElementById('table_panel');
                           var child =document.getElementById("div"+j);
                           parent.removeChild(child);
@@ -362,7 +393,7 @@ function ERDiagram(opts)
             elem.append(html);
             tablee[inc]=document.getElementById("hid"+inc).value;
              self.makedraggable(tablee[inc]);
-            inc++;
+           
            
            
 
@@ -370,15 +401,20 @@ function ERDiagram(opts)
           this.tables_in_diagram.push(table.name);
           console.log(this.tables_in_diagram);
          
-              elem.find(".remove-table").click(function()
+              elem.find("#"+table.name).click(function()
               {
+                var a=$("#"+table.name).attr('id');
                
-                self.removeTable("#"+this.id+"_table", this.id);
+                self.removeTable("#"+a+"_table", a);
              });
+
+            inc++;
 
           }
 
     }
+
+
 
 
 
