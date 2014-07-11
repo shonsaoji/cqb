@@ -5,6 +5,27 @@ h1, h2, h3, h4, h5, h6, body, table, p, div, span, a, li {
   text-shadow: 0 0px 0;
 }
 
+#data
+{
+	width: 250px;
+	height: 30px;
+	border: 1px solid black;
+	align:""center;
+	text-align: center;
+	float: left;
+	background-color: LightGray;
+
+}
+
+#add
+{
+	height: 30px;
+	width: 1000px;
+	float: center;
+
+	border: 1px solid black;
+}
+
 #table_panel  {
 	width: 25%;
 	height: 100%;
@@ -17,6 +38,84 @@ h1, h2, h3, h4, h5, h6, body, table, p, div, span, a, li {
 	height: 100%;
 	border: 1px solid black;
 	float: right;
+}
+#div0,#div1,#div2,#div3,#div4,#div5,#div6,#div7,#div8,#div9,#div10 {
+  width: 245px;
+	text-align: center;
+	border: 1px silver;
+	background-color: LightGray;
+	cursor: pointer;
+}
+
+#first
+{
+	width: 245px;
+	text-align: center;
+	border: 1px silver;
+	background-color: LightGray;
+	cursor: pointer;
+
+}
+
+#span0,#span1,#span2,#span3,#span4,#span5,#span6,#span7,#span8,#span9,#span10
+{
+	display: none;
+}
+
+#div0:hover,#div1:hover,#div2:hover,#div3:hover,#div4:hover,#div5:hover,#div6:hover,#div7:hover,#div8:hover,#div9:hover,#div10:hover
+{
+ background-color: Yellow ; 
+}
+
+
+#second
+{
+	width: 245px;
+	text-align: center;
+	border: 1px silver;
+	background-color: LightGray;
+	cursor: pointer;
+
+}
+
+
+#third
+{
+	width: 245px;
+	text-align: center;
+	border: 1px silver;
+	background-color: LightGray;
+	cursor: pointer;
+
+}
+#fourth
+{
+	width: 245px;
+	text-align: center;
+	border: 1px silver;
+	background-color: LightGray;
+	cursor: pointer;
+
+}
+#fifth
+{
+	width: 245px;
+	text-align: center;
+	border: 1px silver;
+	background-color: LightGray;
+	cursor: pointer;
+
+}
+
+#panel-heading1
+{
+	width: 245px;
+	height: 40px;
+	vertical-align: center;
+	text-align: center;
+	border: 1px silver;
+	background-color: LightGray;
+	cursor: pointer;
 }
 
 
