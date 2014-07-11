@@ -246,10 +246,7 @@ function ERDiagram(opts) {
 
 
          var tablee=[]; 
-       
-
-  
-     
+    
   this.removeTable = function(uiId, table_name)
   {
 
