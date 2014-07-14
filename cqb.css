@@ -139,7 +139,7 @@ div.innerPanel{
 }
 
 div.table-container {
-	width: 100px;
+	width: 150px;
 	border: #DDDDDD 1px solid;
 	display: inline-block;
 	
@@ -176,4 +176,9 @@ div.er-diagram {
 
 .droppable-hover {	
 	background-color: yellow;
+}
+
+#query_panel
+{
+	padding-left:.5cm;
 }

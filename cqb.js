@@ -3,7 +3,7 @@ $(document).ready(function(){
 
  
   
-            var cqb = new CQB({elementId: "cqb_container"});
+       var cqb = new CQB({elementId: "cqb_container"});
        cqb.init();
      
   $("#right_panel").outerWidth($("#cqb_container").innerWidth()- $("#table_panel").outerWidth(true)-1);
@@ -60,11 +60,43 @@ $(document).ready(function(){
             },
             {
               name: "orders",
-              fields: ["order_id", "customer_id", "total"],
+              fields: ["order_id", "customer_id", "total"]
             },
             {
               name:"employees",
-              fields: ["emplyee_id","name","adress"],
+              fields: ["emplyee_id","name","adress"]
+            },
+            {
+              name: "data_sources",
+              fields: ["id", "name", "display_name","load_count","is_enabled","fields_str","dimension_str"]
+            },
+            {
+              name: "dimensions",
+              fields: ["id", "field_name", "form at_as","display_name","unit","rank","charts_id"],
+            },
+            {
+              name:"measures",
+              fields: ["id", "field_name", "form at_as","display_name","unit","field_type","charts_id","is_calculated"],
+            },
+            {
+              name: "user_color_pref",
+              fields: ["id", "color_palette", "bar_color","line_color","area_color","error_bar_color","ctrl_key_color","stat_rel_color","users_id"]
+            },
+            {
+              name: "charts_data_src",
+              fields: ["data_sources", "charts_id", "count"],
+            },
+            {
+              name:"charts",
+              fields: ["id","title","subtitle","width","heigth","margin-left","margin-right","margin-top","margin-bottom","configs","modal_enabled","modal_title"],
+            },
+             {
+              name: "users",
+              fields: ["id", "first_name", "last_name","is_admin","email","password"],
+            },
+            {
+              name:"charts_usr",
+              fields: ["id","width","heigth","users_id","charts_id"],
             }
             ];
             this.tableList = [];
@@ -177,7 +209,8 @@ $(document).ready(function(){
         {
           var html = "";
 
-          for(var i = 0; i < this.tables.length; i++) {
+          for(var i = 0; i < this.tables.length; i++) 
+          {
             html += "<h3 id='" + this.tables[i].name + "'>"+this.tables[i].name +"</h3><div class='" + this.cell_class + "' ><ul>" ;
             for(var j=0;j<this.tables[i].fields.length;j++)
             {
@@ -197,6 +230,8 @@ $(document).ready(function(){
       };
 
 
+ 
+
 function ERDiagram(opts) 
 {
   
@@ -204,25 +239,26 @@ function ERDiagram(opts)
     this.tables_in_diagram = [];
     
     var self = this;
-
+    var id=[];
     var draggableId;
     var droppableId;
     var con;var i=0;var inc=0;var tablee=[]; 
-    var arr=[]; var arrr=[];var data=[];
+    var conn_array=[]; var data=[]; var stretch_from=[];var stretch_to=[];
     var k=0,l=0;var drag=[]; var inc1=0; var inc2=0;var drop=[];
 
-      this.removeTable = function(uiId, table_name)
+      this.removeTable = function(uiId, table_name)                        // removing the tables and the attached connections
       {
 
         $(uiId).remove();
 
               var index = $.inArray(table_name,this.tables_in_diagram);
+
               if(index>= 0)
               {
                this.tables_in_diagram.splice(index,1);
               }
             
-           var length=arr.length;
+           var length=conn_array.length;
              
 
            for(var i=0;i<length;i++)
@@ -233,8 +269,8 @@ function ERDiagram(opts)
               if(((drag[i].substring(0,3))==table_name.substring(0,3))||((drop[i].substring(0,3))==table_name.substring(0,3)))
               {
 
-                 jqSimpleConnect.removeConnection(arr[i]);
-                 delete(arr[i]);
+                 jqSimpleConnect.removeConnection(conn_array[i]);
+                 delete(conn_array[i]);
                 delete(drag[i]);
                 delete(drop[i]);
                 drag[i]="zzz";
@@ -252,21 +288,44 @@ function ERDiagram(opts)
       }
 
  
-      this.makedraggable=function(namess)
+      this.makedraggable=function(namess,length)                                // to make the elements draggable and also repaint the connections
       {
 
-           for(var i=0;i<3;i++)
+         
+           $("#"+namess+"_table").draggable();
+
+           $( "#"+namess+"_table").on( "dragstop", function( event, ui ) { 
+
+
+                 
+                       for(var i=0;i<conn_array.length;i++)
+                       {
+                         if((stretch_from[i]==namess)||(stretch_to[i]==namess))
+                         {
+                                jqSimpleConnect.repaintConnection(conn_array[i]);
+                         }
+                       }
+
+             });
+
+       
+   
+           for(var i=0;i<length;i++)
            {
               $("#"+namess+i).draggable({ revert: true });
+      
            }
             
 
+
         making_droppable();
-    }
+      }
 
 
-  function making_droppable()
+  function making_droppable()                                            // to make the elements droppable
   {
+
+
 
     $('.table-cell').droppable({ drop: Drop });
 
@@ -288,12 +347,16 @@ function ERDiagram(opts)
 
   
 
-         this.connections=function()
+         this.connections=function()                                          // for making connections and creating a div for deletion
          {
          
+            
+
              con = jqSimpleConnect.connect("#"+draggableId, "#"+droppableId, {radius: 4, color: 'yellow'});
+
+             
                   
-              arr.push(con);
+              conn_array.push(con);
 
                    var node=document.createElement("div");
                    node.id="div"+i;
@@ -320,16 +383,19 @@ function ERDiagram(opts)
                    drag.push(res1+"."+aa);
                    drop.push(res2+"."+bb);
 
+                   stretch_from.push(res1);
+                   stretch_to.push(res2);
+
                  $("#div"+i).click(function()
                  {
 
-                          var a=node.id;
+                              var a=node.id;
                        
                               var j =  a[3];
 
 
-                         jqSimpleConnect.removeConnection(arr[j]);
-                          delete arr[j];
+                         jqSimpleConnect.removeConnection(conn_array[j]);
+                          delete conn_array[j];
                           delete drag[j];
                           delete drop[j];
 
@@ -348,13 +414,7 @@ function ERDiagram(opts)
         
       }
 
-         setInterval(function() 
-
-         {
-
-           jqSimpleConnect.repaintAll();                    // we can directly use this method
-
-         });
+        
 
   this.append_table = function(table)
   {
@@ -365,6 +425,8 @@ function ERDiagram(opts)
    
              if(table)
             {
+
+              var checkbox_array=[];var z=0;
                   var html = " ";
 
                          html +="<input type='hidden' id='hid"+inc+"' value='"+table.name+"'>"
@@ -379,27 +441,23 @@ function ERDiagram(opts)
                           html += table.fields[j] ;
                           html += "</div>";
 
-                         arrr[k]=table.name+""+j+""+j;
-                                            
-                                             
-
-                                              k++;
+                         checkbox_array[z]=table.name+""+j+""+j;
+                              
+                                              z++;
 
 
                         }
                            
 
-            html += "</div>";
-            elem.append(html);
-            tablee[inc]=document.getElementById("hid"+inc).value;
-             self.makedraggable(tablee[inc]);
+                  html += "</div>";
+                  elem.append(html);
+                  tablee[inc]=document.getElementById("hid"+inc).value;
+                 var len_check=checkbox_array.length;
+                 self.makedraggable(tablee[inc],len_check);
            
-           
-           
-
-           elem.find(".draggable").draggable();
-          this.tables_in_diagram.push(table.name);
-          console.log(this.tables_in_diagram);
+          
+              this.tables_in_diagram.push(table.name);
+              console.log(this.tables_in_diagram);
          
               elem.find("#"+table.name).click(function()
               {
@@ -418,7 +476,7 @@ function ERDiagram(opts)
 
 
 
-
+//  This click function will be used to generate a query
 
 
       $( "#data" ).click(function() {
@@ -480,7 +538,7 @@ function ERDiagram(opts)
                 query += " LEFTJOIN " + table_ids[i+1] + " ON " + dragg_dropp[i] ;
               }
 
-          query_panel.innerHTML +=query ;
+          query_panel.innerHTML +="<h3 align='center'>QUERY</h3><br>"+query ;
 
       })
      
