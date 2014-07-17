@@ -160,6 +160,7 @@ div.er-diagram {
 	height: 100%;
 	overflow: auto;
 	border: #CCCCCC 1px solid;
+
 	
 }
 .ui-widget-content{
@@ -181,4 +182,11 @@ div.er-diagram {
 #query_panel
 {
 	padding-left:.5cm;
+}
+
+#joins
+{
+	float: right;
+	width: 160px;
+	
 }

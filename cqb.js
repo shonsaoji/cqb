@@ -103,7 +103,7 @@ $(document).ready(function(){
   
             this.init = function() 
             {
-              this.element.html("<div id='table_panel' class='panel-default'><div class='panel-heading'>Table List</div><div id='table_accordian' class=''></div><br/><br/><br/><div class='panel-heading'>Connections :</div></div><div id='right_panel'class='panel-default'><div id = 'er_panel' class='innerPanel panel-default'><div class='panel-heading'>Query Builder</div><div id='er-diagram' class='er-diagram panel-body'><h6>Drag Tables Here</h6></div></div><div id = 'output_panel'class='innerPanel panel-default'><div class='panel-heading'>Query</div></div><div id = 'query_panel'class='innerPanel panel-default'><div class='panel-heading'>Query</div></div></div>");
+              this.element.html("<div id='table_panel' class='panel-default'><div class='panel-heading'>Table List</div><div id='table_accordian' class=''></div><br/><br/><br/><div class='panel-heading'>Connections :</div></div><div id='right_panel'class='panel-default'><div id = 'er_panel' class='innerPanel panel-default'><div class='panel-heading'>Query Builder <select id='joins'><option value='JOINS U CAN APPLY'>JOINS U CAN APPLY</option> <option value='LEFT_JOIN'>LEFT JOIN</option><option value='RIGHT_JOIN'>RIGHT JOIN</option><option value='INNER_JOIN'>INNER JOIN</option></select></div><div id='er-diagram' class='er-diagram panel-body'><h6>Drag Tables Here</h6></div></div><div id = 'output_panel'class='innerPanel panel-default'><div class='panel-heading'>Query</div></div><div id = 'query_panel'class='innerPanel panel-default'><div class='panel-heading'>Query</div></div></div>");
               
               this.tableList = new TableList({
                 element: "table_accordian",
@@ -155,7 +155,8 @@ $(document).ready(function(){
 
           var self_cqb = this;
 
-          for(var i = 0; i < this.tables_list.length; i++) {
+          for(var i = 0; i < this.tables_list.length; i++) 
+                {
             var table_name_elem = $("#" + this.tables_list[i].name);
           
             table_name_elem.draggable({ helper:"clone" ,
@@ -165,6 +166,8 @@ $(document).ready(function(){
           }   
 
           var er_elem = $("#er-diagram");
+
+          
 
           $("#er-diagram").droppable({
             drop: function( event, ui ) 
@@ -202,7 +205,7 @@ $(document).ready(function(){
         this.container_class = opts.container_class || "table-container";
 
 
-      this.cell_class = opts.cell_class || "table-cell";                       
+        this.cell_class = opts.cell_class || "table-cell";                       
 
 
         this.draw = function() 
@@ -287,6 +290,22 @@ function ERDiagram(opts)
           
       }
 
+
+      this.scrolll=function()
+      {
+        $( window ).scroll(function() {
+
+               jqSimpleConnect.repaintAll();  
+
+            })
+
+
+        $("#er_panel").scroll(function()
+        {
+           jqSimpleConnect.repaintAll();  
+        })
+      }
+
  
       this.makedraggable=function(namess,length)                                // to make the elements draggable and also repaint the connections
       {
@@ -343,6 +362,7 @@ function ERDiagram(opts)
 
 
   }
+
 
 
   
@@ -414,6 +434,7 @@ function ERDiagram(opts)
         
       }
 
+     
         
 
   this.append_table = function(table)
@@ -453,6 +474,7 @@ function ERDiagram(opts)
                   elem.append(html);
                   tablee[inc]=document.getElementById("hid"+inc).value;
                  var len_check=checkbox_array.length;
+                 self.scrolll();
                  self.makedraggable(tablee[inc],len_check);
            
           
@@ -480,6 +502,13 @@ function ERDiagram(opts)
 
 
       $( "#data" ).click(function() {
+
+
+        var x = document.getElementById("joins").selectedIndex;
+        var y = document.getElementById("joins").options;
+         
+          if(y[x].text=="LEFT JOIN" || y[x].text=="RIGHT JOIN" || y[x].text=="INNER JOIN" )
+          {
         
           query_panel.innerHTML = " ";
 
@@ -535,10 +564,21 @@ function ERDiagram(opts)
 
               for(var i=0;i<table_ids.length - 1;i++)
               {
-                query += " LEFTJOIN " + table_ids[i+1] + " ON " + dragg_dropp[i] ;
+                query += " "+ y[x].text +" " + table_ids[i+1] + " ON " + dragg_dropp[i] ;
               }
 
           query_panel.innerHTML +="<h3 align='center'>QUERY</h3><br>"+query ;
+
+         } 
+
+
+      else
+      {
+         query_panel.innerHTML = " ";
+         alert("PLEASE SELECT A TYPE OF JOIN")
+      }
+
+
 
       })
      
