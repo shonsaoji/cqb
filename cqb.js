@@ -248,7 +248,8 @@ function ERDiagram(opts)
     var con;var i=0;var inc=0;var tablee=[]; 
     var conn_array=[]; var data=[]; var stretch_from=[];var stretch_to=[];
     var k=0,l=0;var drag=[]; var inc1=0; var inc2=0;var drop=[];
-     var ress1;var ress2,value,value1;
+     var ress1;var ress2,value1;
+      var value=[];
      var drag_column=[],drop_column=[];
 
       this.removeTable = function(uiId, table_name)                        // removing the tables and the attached connections
@@ -432,13 +433,13 @@ console.log(droppableId)
 
           $('#right_panel').on('click','.text-btn',function () {
 
-                alert(this.id)
+               // alert(this.id)
 
                  var elem = $("#"+droppableId+"popoverr");          // default popover
                  var current = this.parentElement;   
 
                  var last=current.parentElement;               // parent of save button  
-                  value = $($(current).find('select')[0]).val();
+                  value.push($($(current).find('select')[0]).val());
                   value1=$($(current).find('select')[1]).val();
               
                   var  option = elem.find('#firstt option[value="'+value+'"]');
@@ -652,7 +653,7 @@ console.log(droppableId)
 
               for(var i=0;i<tablee.length - 1;i++)
               {
-                query += " "+ value +" " + tablee[i+1] + " ON " + tablee[i]+"."+drag_column[i] + value1 + tablee[i+1]+"."+drop_column[i] ;
+                query += " "+ value[i] +" " + tablee[i+1] + " ON " + tablee[i]+"."+drag_column[i] + value1 + tablee[i+1]+"."+drop_column[i] ;
               }
 
           query_panel.innerHTML +="<h3 align='center'>QUERY</h3><br>"+query ;
