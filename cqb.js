@@ -8,9 +8,9 @@ $(document).ready(function(){
      
   $("#right_panel").outerWidth($("#cqb_container").innerWidth()- $("#table_panel").outerWidth(true)-1);
   $("#right_panel").outerHeight($("#cqb_container").innerHeight());
-  $("#output_panel").outerHeight($("#right_panel").innerHeight()/3);
+//  $("#output_panel").outerHeight($("#right_panel").innerHeight()/3);
   $("#query_panel").outerHeight($("#right_panel").innerHeight()/3);
-  $("#er_panel").outerHeight($("#right_panel").innerHeight()/3);
+  $("#er_panel").outerHeight($("#right_panel").innerHeight()/1.5);
   $("#table_panel").resizable({
      handles: 'e',
         minWidth: '100',
@@ -103,7 +103,7 @@ $(document).ready(function(){
   
             this.init = function() 
             {
-              this.element.html("<div id='table_panel' class='panel-default'><div class='panel-heading'>Table List</div><div id='table_accordian' class=''></div><br/><br/><br/><div class='panel-heading'>Connections :</div></div><div id='right_panel'class='panel-default'><div id = 'er_panel' class='innerPanel panel-default'><div class='panel-heading'>Query Builder <select id='joins'><option value='JOINS U CAN APPLY'>JOINS U CAN APPLY</option> <option value='LEFT_JOIN'>LEFT JOIN</option><option value='RIGHT_JOIN'>RIGHT JOIN</option><option value='INNER_JOIN'>INNER JOIN</option></select></div><div id='er-diagram' class='er-diagram panel-body'><h6>Drag Tables Here</h6></div></div><div id = 'output_panel'class='innerPanel panel-default'><div class='panel-heading'>Query</div></div><div id = 'query_panel'class='innerPanel panel-default'><div class='panel-heading'>Query</div></div></div>");
+              this.element.html("<div id='table_panel' class='panel-default'><div class='panel-heading'>Table List</div><div id='table_accordian' class=''></div><br/><br/><br/><div class='panel-heading'>Connections :</div></div><div id='right_panel'class='panel-default'><div id = 'er_panel' class='innerPanel panel-default'><div class='panel-heading'>Query Builder <select id='joins'><option value='JOINS U CAN APPLY'>JOINS U CAN APPLY</option> <option value='LEFT_JOIN'>LEFT JOIN</option><option value='RIGHT_JOIN'>RIGHT JOIN</option><option value='INNER_JOIN'>INNER JOIN</option></select></div><div id='er-diagram' class='er-diagram panel-body'><h6>Drag Tables Here</h6></div></div><div id = 'query_panel'class='innerPanel panel-default'><div class='panel-heading'>Query</div></div></div>");
               
               this.tableList = new TableList({
                 element: "table_accordian",
@@ -248,6 +248,8 @@ function ERDiagram(opts)
     var con;var i=0;var inc=0;var tablee=[]; 
     var conn_array=[]; var data=[]; var stretch_from=[];var stretch_to=[];
     var k=0,l=0;var drag=[]; var inc1=0; var inc2=0;var drop=[];
+     var ress1;var ress2,value,value1;
+     var drag_column=[],drop_column=[];
 
       this.removeTable = function(uiId, table_name)                        // removing the tables and the attached connections
       {
@@ -304,9 +306,14 @@ function ERDiagram(opts)
         {
            jqSimpleConnect.repaintAll();  
         })
-      }
 
- 
+        $("#er-diagram").scroll(function()
+        {
+          jqSimpleConnect.repaintAll();
+        })
+      
+
+ }
       this.makedraggable=function(namess,length)                                // to make the elements draggable and also repaint the connections
       {
 
@@ -355,13 +362,13 @@ function ERDiagram(opts)
               draggableId = ui.draggable.attr("id");
 
               droppableId = $(this).attr("id");
-
+console.log(droppableId)
               self.connections();
 
           }
 
 
-  }
+    }
 
 
 
@@ -370,12 +377,91 @@ function ERDiagram(opts)
          this.connections=function()                                          // for making connections and creating a div for deletion
          {
          
+         
+
+             con = jqSimpleConnect.connect("#"+draggableId, "#"+droppableId, {radius: 4, color: 'Gray'});
+
+             $("#"+draggableId).append("  <a href='#' id='"+draggableId+"popover' class='pops'>&nbsp &nbsp&nbsp <span class='edit_connection glyphicon glyphicon-edit form-control-feedback'></span></a>");
+             $("#"+droppableId).append("  <a href='#' id='"+droppableId+"popover'>&nbsp &nbsp&nbsp <span class='edit_connection glyphicon glyphicon-edit form-control-feedback'></span></a>");
             
 
-             con = jqSimpleConnect.connect("#"+draggableId, "#"+droppableId, {radius: 4, color: 'yellow'});
 
+                 drag_column.push($("#" + draggableId+"").find("input").val());            // customer_id
+                 drop_column.push($("#" + droppableId+"").find("input").val());
+         
+                var parentt1=$("#" + draggableId+"").parent().attr("id");          // customers_table
              
-                  
+                 ress1=document.getElementById(parentt1).getAttribute('value');       // customers
+ 
+                 var parentt2=$("#" + droppableId+"").parent().attr("id");
+                  ress2=document.getElementById(parentt2).getAttribute('value');
+
+
+                $("#right_panel").append("<div id='"+droppableId+"popoverr' class='pop_box' style='display: none'>"+ress1+"<p><br></p><select id='firstt'><option value='Type of join'>Type of join</option><option value='left_join'>LEFT_JOIN</option><option value='right_join'>RIGHT_JOIN</option><option value='inner_join'>INNER_JOIN</option></select><p><br></p>"+ress2+"  &nbsp &nbsp  ON <br><br> "+ress1+"."+drag_column+"<select id='compare'><option value='comparison'>comparison</option><option value='='> = </option></select>&nbsp&nbsp"+ress2+"."+drop_column+"<p><br></p> <button class='text-btn' id='save' onclick='save_pop("+droppableId+")'>Save</button>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<button class='text-btn1'>Cancel</button></div>")
+
+
+    
+
+        
+         
+             
+            $("#"+droppableId+"popover").popover({
+                   
+                
+                  placement: 'bottom',
+                  html : true, 
+                  content: function() {
+                    return $("#"+droppableId+"popoverr").html();
+                  },
+                  title: function() {
+                    return $("#edit").html();
+                  }
+
+
+
+              });
+
+
+          
+
+
+         // $(document).on('click', 'span', function () {
+         //      alert(this.id);
+         //     });
+
+
+          // $('#right_panel').on('click','.text-btn',function () {
+
+          //       alert(this.id)
+
+          //        var elem = $("#"+droppableId+"popoverr");          // default popover
+          //        var current = this.parentElement;   
+
+          //        var last=current.parentElement;               // parent of save button  
+          //         value = $($(current).find('select')[0]).val();
+          //         value1=$($(current).find('select')[1]).val();
+              
+          //         var  option = elem.find('#firstt option[value="'+value+'"]');
+
+          //          var  option1 = elem.find('#compare option[value="'+value1+'"]');
+
+          //         $(option).attr('selected',true);
+          //           $(option1).attr('selected',true);
+            
+          //        $("#"+droppableId+"popover").popover("hide");
+
+                 
+          //     });
+
+           $('#right_panel').on('click','.text-btn1',function () {
+                 
+                 $("#"+droppableId+"popover").popover("hide");
+              });
+
+
+
+         
+
               conn_array.push(con);
 
                    var node=document.createElement("div");
@@ -434,6 +520,9 @@ function ERDiagram(opts)
         
       }
 
+
+           
+            
      
         
 
@@ -498,17 +587,15 @@ function ERDiagram(opts)
 
 
 
+
+
 //  This click function will be used to generate a query
 
 
       $( "#data" ).click(function() {
 
 
-        var x = document.getElementById("joins").selectedIndex;
-        var y = document.getElementById("joins").options;
-         
-          if(y[x].text=="LEFT JOIN" || y[x].text=="RIGHT JOIN" || y[x].text=="INNER JOIN" )
-          {
+      
         
           query_panel.innerHTML = " ";
 
@@ -546,12 +633,12 @@ function ERDiagram(opts)
 
 
 
-       var dragg_dropp=[];
+       // var dragg_dropp=[];
 
-              $(".connections").each(function(k,v)
-              {
-                dragg_dropp.push($(v)[0].innerText);
-              });
+       //        $(".connections").each(function(k,v)
+       //        {
+       //          dragg_dropp.push($(v)[0].innerText);
+       //        });
           
 
           var query = "";
@@ -560,27 +647,77 @@ function ERDiagram(opts)
 
           query += table_ids[0];
 
+        
+        
 
-
-              for(var i=0;i<table_ids.length - 1;i++)
+              for(var i=0;i<tablee.length - 1;i++)
               {
-                query += " "+ y[x].text +" " + table_ids[i+1] + " ON " + dragg_dropp[i] ;
+                query += " "+ value +" " + tablee[i+1] + " ON " + tablee[i]+"."+drag_column[i] + value1 + tablee[i+1]+"."+drop_column[i] ;
               }
 
           query_panel.innerHTML +="<h3 align='center'>QUERY</h3><br>"+query ;
 
-         } 
-
-
-      else
-      {
-         query_panel.innerHTML = " ";
-         alert("PLEASE SELECT A TYPE OF JOIN")
-      }
+       
 
 
 
       })
+
+
+
+         
+
+
      
 }
+  function save_pop(d)
+            {
+            
+               
+              var elem=$(d).find('a').attr('id')+"r";
 
+                
+               var variable=$(d).find('a').attr('id');
+
+                   var val1=$($(d).find('select')[0]).val();
+                   var val11=$($(d).find('select')[1]).val();
+
+                    var val2= $("#"+elem).find('select option[value="'+val1+'"]');
+                    var val21= $("#"+elem).find('select option[value="'+val11+'"]');
+                 
+                //  var val2=elem.find('#firstt option[value="'+val1+'"]');
+
+                
+                 $(val2).attr('selected',true);
+                  $(val21).attr('selected',true);
+
+               $("#"+variable).popover("hide");
+
+
+                // var current = this.parentElement;  
+
+
+
+          //        var elem = $("#"+droppableId+"popoverr");          // default popover
+          //        var current = this.parentElement;   
+
+          //        var last=current.parentElement;               // parent of save button  
+          //         value = $($(current).find('select')[0]).val();
+          //         value1=$($(current).find('select')[1]).val();
+              
+          //         var  option = elem.find('#firstt option[value="'+value+'"]');
+
+          //          var  option1 = elem.find('#compare option[value="'+value1+'"]');
+
+          //         $(option).attr('selected',true);
+          //           $(option1).attr('selected',true);
+            
+          //        $("#"+droppableId+"popover").popover("hide");
+ 
+
+              
+              
+            }
+
+
+         
