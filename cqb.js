@@ -430,28 +430,28 @@ console.log(droppableId)
          //     });
 
 
-          // $('#right_panel').on('click','.text-btn',function () {
+          $('#right_panel').on('click','.text-btn',function () {
 
-          //       alert(this.id)
+                alert(this.id)
 
-          //        var elem = $("#"+droppableId+"popoverr");          // default popover
-          //        var current = this.parentElement;   
+                 var elem = $("#"+droppableId+"popoverr");          // default popover
+                 var current = this.parentElement;   
 
-          //        var last=current.parentElement;               // parent of save button  
-          //         value = $($(current).find('select')[0]).val();
-          //         value1=$($(current).find('select')[1]).val();
+                 var last=current.parentElement;               // parent of save button  
+                  value = $($(current).find('select')[0]).val();
+                  value1=$($(current).find('select')[1]).val();
               
-          //         var  option = elem.find('#firstt option[value="'+value+'"]');
+                  var  option = elem.find('#firstt option[value="'+value+'"]');
 
-          //          var  option1 = elem.find('#compare option[value="'+value1+'"]');
+                   var  option1 = elem.find('#compare option[value="'+value1+'"]');
 
-          //         $(option).attr('selected',true);
-          //           $(option1).attr('selected',true);
+                  $(option).attr('selected',true);
+                    $(option1).attr('selected',true);
             
-          //        $("#"+droppableId+"popover").popover("hide");
+                 $("#"+droppableId+"popover").popover("hide");
 
                  
-          //     });
+              });
 
            $('#right_panel').on('click','.text-btn1',function () {
                  
@@ -670,54 +670,54 @@ console.log(droppableId)
 
      
 }
-  function save_pop(d)
-            {
+  // function save_pop(d)
+  //           {
             
                
-              var elem=$(d).find('a').attr('id')+"r";
+  //             var elem=$(d).find('a').attr('id')+"r";
 
                 
-               var variable=$(d).find('a').attr('id');
+  //              var variable=$(d).find('a').attr('id');
 
-                   var val1=$($(d).find('select')[0]).val();
-                   var val11=$($(d).find('select')[1]).val();
+  //                  var val1=$($(d).find('select')[0]).val();
+  //                  var val11=$($(d).find('select')[1]).val();
 
-                    var val2= $("#"+elem).find('select option[value="'+val1+'"]');
-                    var val21= $("#"+elem).find('select option[value="'+val11+'"]');
+  //                   var val2= $("#"+elem).find('select option[value="'+val1+'"]');
+  //                   var val21= $("#"+elem).find('select option[value="'+val11+'"]');
                  
-                //  var val2=elem.find('#firstt option[value="'+val1+'"]');
+  //               //  var val2=elem.find('#firstt option[value="'+val1+'"]');
 
                 
-                 $(val2).attr('selected',true);
-                  $(val21).attr('selected',true);
+  //                $(val2).attr('selected',true);
+  //                 $(val21).attr('selected',true);
 
-               $("#"+variable).popover("hide");
-
-
-                // var current = this.parentElement;  
+  //              $("#"+variable).popover("hide");
 
 
+  //               // var current = this.parentElement;  
 
-          //        var elem = $("#"+droppableId+"popoverr");          // default popover
-          //        var current = this.parentElement;   
 
-          //        var last=current.parentElement;               // parent of save button  
-          //         value = $($(current).find('select')[0]).val();
-          //         value1=$($(current).find('select')[1]).val();
+
+  //         //        var elem = $("#"+droppableId+"popoverr");          // default popover
+  //         //        var current = this.parentElement;   
+
+  //         //        var last=current.parentElement;               // parent of save button  
+  //         //         value = $($(current).find('select')[0]).val();
+  //         //         value1=$($(current).find('select')[1]).val();
               
-          //         var  option = elem.find('#firstt option[value="'+value+'"]');
+  //         //         var  option = elem.find('#firstt option[value="'+value+'"]');
 
-          //          var  option1 = elem.find('#compare option[value="'+value1+'"]');
+  //         //          var  option1 = elem.find('#compare option[value="'+value1+'"]');
 
-          //         $(option).attr('selected',true);
-          //           $(option1).attr('selected',true);
+  //         //         $(option).attr('selected',true);
+  //         //           $(option1).attr('selected',true);
             
-          //        $("#"+droppableId+"popover").popover("hide");
+  //         //        $("#"+droppableId+"popover").popover("hide");
  
 
               
               
-            }
+  //           }
 
 
          
